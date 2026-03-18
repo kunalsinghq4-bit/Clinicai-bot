@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: clinicai-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
+    envVars:
+      - key: GEMINI_API_KEY
+        value: AIzaSyAD8NbHlOocwmU1jP_a_pVtrnE2dDZcReU
+      - key: ULTRAMSG_INSTANCE
+        value: instance166153
+      - key: ULTRAMSG_TOKEN
+        value: ch512e62wj5hxj36
+      - key: DOCTOR_NUMBER
+        value: "916205131181"
