@@ -15,7 +15,7 @@ DOCTOR_NUMBER = os.environ.get("DOCTOR_NUMBER", "916205131181")  # Doctor ka Wha
 
 # Gemini Setup
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash')
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
 # Patient data store (in-memory, resets on restart)
 # Format: { "phone": { "name": "", "step": "", "appointment": {} } }
