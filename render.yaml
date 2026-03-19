@@ -5,8 +5,8 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app
     envVars:
-      - key: GEMINI_API_KEY
-        value: AIzaSyAD8NbHlOocwmU1jP_a_pVtrnE2dDZcReU
+      - key: GROQ_API_KEY
+        value: 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
       - key: ULTRAMSG_INSTANCE
         value: instance166153
       - key: ULTRAMSG_TOKEN
