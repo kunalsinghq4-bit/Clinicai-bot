@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: clinicai-bot
+    env: python
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
+    envVars:
+      - key: GROQ_API_KEY
+        value: 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
+      - key: ULTRAMSG_INSTANCE
+        value: instance166153
+      - key: ULTRAMSG_TOKEN
+        value: ch512e62wj5hxj36
+      - key: DOCTOR_NUMBER
+        value: "916205131181"
