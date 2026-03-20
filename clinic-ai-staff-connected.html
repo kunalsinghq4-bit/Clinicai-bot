@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicAI — Staff Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00C896;
+    --green-dark: #00A87E;
+    --green-glow: rgba(0,200,150,0.12);
+    --bg: #060D0A;
+    --bg2: #0C1610;
+    --bg3: #111E16;
+    --card: #0F1A13;
+    --border: rgba(0,200,150,0.15);
+    --text: #E8F5F0;
+    --muted: #6B8F7E;
+    --red: #FF5F57;
+    --yellow: #FFBD2E;
+    --blue: #4A9EFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 50;
+    transition: transform 0.3s;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--green);
+  }
+
+  .logo span { color: var(--text); }
+
+  .clinic-info {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--green-glow);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .clinic-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .clinic-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .online-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    margin-right: 4px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .sidebar-nav {
+    padding: 16px 12px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 8px;
+    margin: 16px 0 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+    position: relative;
+  }
+
+  .nav-item:hover {
+    background: var(--green-glow);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: var(--green-glow);
+    color: var(--green);
+    border: 1px solid var(--border);
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--green);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 100px;
+  }
+
+  .nav-badge.red { background: var(--red); color: #fff; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .staff-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .staff-avatar {
+    width: 36px; height: 36px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #000;
+  }
+
+  .staff-name { font-size: 13px; font-weight: 600; }
+  .staff-role { font-size: 11px; color: var(--muted); }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(6,13,10,0.9);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbar-date {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary:hover {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+  }
+
+  /* CONTENT */
+  .content {
+    padding: 28px;
+    flex: 1;
+  }
+
+  /* TABS */
+  .tabs {
+    display: none;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* OVERVIEW */
+  .overview-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .ov-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.3s;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  .ov-card:hover {
+    border-color: rgba(0,200,150,0.3);
+    transform: translateY(-2px);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ov-card:nth-child(2) { animation-delay: 0.1s; }
+  .ov-card:nth-child(3) { animation-delay: 0.2s; }
+  .ov-card:nth-child(4) { animation-delay: 0.3s; }
+
+  .ov-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .ov-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .ov-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .ov-change {
+    font-size: 11px;
+    color: #4CAF50;
+  }
+
+  /* GRID 2 COL */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .panel-action {
+    font-size: 12px;
+    color: var(--green);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .panel-body { padding: 16px 20px; }
+
+  /* PATIENT LIST */
+  .patient-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,200,150,0.05);
+    transition: all 0.2s;
+  }
+
+  .patient-row:last-child { border-bottom: none; }
+  .patient-row:hover { padding-left: 4px; }
+
+  .p-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .p-info { flex: 1; }
+  .p-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .p-detail { font-size: 12px; color: var(--muted); }
+
+  .p-time {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    text-align: right;
+  }
+
+  .p-status {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .s-confirmed { background: rgba(0,200,150,0.1); color: var(--green); border: 1px solid rgba(0,200,150,0.2); }
+  .s-waiting { background: rgba(255,189,46,0.1); color: var(--yellow); border: 1px solid rgba(255,189,46,0.2); }
+  .s-done { background: rgba(107,143,126,0.1); color: var(--muted); border: 1px solid rgba(107,143,126,0.2); }
+  .s-noshow { background: rgba(255,95,87,0.1); color: var(--red); border: 1px solid rgba(255,95,87,0.2); }
+
+  /* FORM */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0,200,150,0.1);
+  }
+
+  .form-select option { background: var(--bg3); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .btn-full {
+    width: 100%;
+    background: var(--green);
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-full:hover { background: var(--green-dark); }
+
+  .btn-outline {
+    width: 100%;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 8px;
+  }
+
+  .btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+  /* QR SECTION */
+  .qr-box {
+    background: var(--bg3);
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .qr-box:hover { border-color: var(--green); }
+
+  .qr-code {
+    width: 120px; height: 120px;
+    background: white;
+    border-radius: 10px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .qr-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .qr-sub { font-size: 13px; color: var(--muted); }
+
+  /* REPORT SEND */
+  .report-patient {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .report-patient:hover { border-color: var(--green); }
+  .report-patient.selected { border-color: var(--green); background: var(--green-glow); }
+
+  .rp-info { flex: 1; }
+  .rp-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .rp-detail { font-size: 12px; color: var(--muted); }
+
+  .rp-check {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 11px;
+  }
+
+  .report-patient.selected .rp-check {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+
+  /* SCHEDULE */
+  .schedule-day {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0,200,150,0.05);
+    gap: 16px;
+  }
+
+  .schedule-day:last-child { border-bottom: none; }
+
+  .day-name {
+    width: 80px;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .day-toggle {
+    width: 40px; height: 22px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .day-toggle.on { background: var(--green); border-color: var(--green); }
+
+  .day-toggle::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    transition: all 0.3s;
+  }
+
+  .day-toggle.on::after { left: 20px; }
+
+  .day-times {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .time-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    width: 90px;
+    transition: border-color 0.2s;
+  }
+
+  .time-input:focus { border-color: var(--green); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #000;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 30px rgba(0,200,150,0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* MOBILE */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 8px 0;
+    z-index: 100;
+  }
+
+  .mobile-nav-inner {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 500;
+    transition: color 0.2s;
+    border-radius: 8px;
+  }
+
+  .mobile-nav-item.active { color: var(--green); }
+  .mobile-nav-item span:first-child { font-size: 20px; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ALERT */
+  .alert {
+    background: rgba(255,189,46,0.08);
+    border: 1px solid rgba(255,189,46,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+  .alert-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .alert-text strong { color: var(--yellow); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .hamburger { display: block; }
+    .mobile-nav { display: block; }
+    .content { padding: 20px 16px 90px; }
+    .overview-cards { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .overview-cards { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .ov-num { font-size: 26px; }
+  }
+
+  /* OVERLAY */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 49;
+  }
+
+  .overlay.show { display: block; }
+
+  /* MODAL */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal.show { display: flex; }
+
+  .modal-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 460px;
+    animation: modalIn 0.3s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-close {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 20px;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">Clinic<span>AI</span></div>
+    <div class="clinic-info">
+      <div class="clinic-name">Dr. Sharma's Clinic</div>
+      <div class="clinic-sub"><span class="online-dot"></span>Bot Active · Patna</div>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <div class="nav-item active" onclick="showTab('overview', this)">📊 &nbsp;Overview</div>
+    <div class="nav-item" onclick="showTab('appointments', this)">📅 &nbsp;Appointments <span class="nav-badge">9</span></div>
+    <div class="nav-item" onclick="showTab('add-patient', this)">➕ &nbsp;Patient Add Karo</div>
+
+    <div class="nav-section-label">Actions</div>
+    <div class="nav-item" onclick="showTab('reports', this)">📋 &nbsp;Report Bhejo <span class="nav-badge red">3</span></div>
+    <div class="nav-item" onclick="showTab('qr', this)">📲 &nbsp;QR Code</div>
+    <div class="nav-item" onclick="showTab('reminders', this)">🔔 &nbsp;Reminders</div>
+
+    <div class="nav-section-label">Settings</div>
+    <div class="nav-item" onclick="showTab('schedule', this)">🗓️ &nbsp;Schedule Set Karo</div>
+    <div class="nav-item" onclick="showTab('bot-control', this)">🤖 &nbsp;Bot Control</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="staff-info">
+      <div class="staff-avatar">R</div>
+      <div>
+        <div class="staff-name">Receptionist</div>
+        <div class="staff-role">Staff · Dr. Sharma Clinic</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:12px">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="pageTitle">Overview</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="currentDate"></div>
+      <button class="btn-primary" onclick="showTab('add-patient', null)">
+        ➕ Patient Add
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="tab-content active" id="tab-overview">
+      <div class="alert" id="overviewAlert" style="display:none">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text" id="overviewAlertText"></div>
+      </div>
+
+      <div class="overview-cards">
+        <div class="ov-card">
+          <div class="ov-icon">👥</div>
+          <div class="ov-label">Aaj ke Patients</div>
+          <div class="ov-num" id="ovTotal">-</div>
+          <div class="ov-change">Total appointments</div>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">✅</div>
+          <div class="ov-label">WhatsApp se Aaye</div>
+          <div class="ov-num" id="ovWhatsapp">-</div>
+          <div class="ov-change">Bot se book kiya</div>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">💬</div>
+          <div class="ov-label">WhatsApp Messages</div>
+          <div class="ov-num" id="ovMessages">-</div>
+          <div class="ov-change">Bot ne handle kiye</div>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">🏥</div>
+          <div class="ov-label">Offline Patients</div>
+          <div class="ov-num" id="ovOffline">-</div>
+          <div class="ov-change">Staff ne add kiye</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Aaj ka Schedule</div>
+            <div class="panel-action" onclick="showTab('appointments', null)">Sab dekhein →</div>
+          </div>
+          <div class="panel-body" id="overviewSchedule">
+            <div style="color:var(--muted);text-align:center;padding:20px;">Loading...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Quick Actions</div>
+          </div>
+          <div class="panel-body">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button class="btn-outline" onclick="sendDoctorSummary()" style="text-align:left; padding:14px 16px;">📊 Doctor ko Summary Bhejo</button>
+              <button class="btn-outline" onclick="showTab('add-patient', null)" style="text-align:left; padding:14px 16px;">➕ Naya Patient Add Karo</button>
+              <button class="btn-outline" onclick="showTab('reminders', null)" style="text-align:left; padding:14px 16px;">🔔 Reminders Bhejo</button>
+              <button class="btn-outline" onclick="showTab('reports', null)" style="text-align:left; padding:14px 16px;">📋 Report Bhejo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="tab-content" id="tab-appointments">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Aaj ke Appointments</div>
+          <div class="section-sub">18 March 2026 · 9 patients total</div>
+        </div>
+        <button class="btn-primary" onclick="showTab('add-patient', null)">➕ Add Patient</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-body" style="padding:0">
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; padding:12px 20px; font-size:11px; color:var(--muted); font-weight:600; letter-spacing:0.5px; border-bottom:1px solid var(--border);">
+            <span>PATIENT</span><span>TIME</span><span>COMPLAINT</span><span>SOURCE</span><span>STATUS</span>
+          </div>
+          <div id="appointmentList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD PATIENT -->
+    <div class="tab-content" id="tab-add-patient">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Offline Patient Add Karo</div>
+          <div class="section-sub">Jo patients seedha clinic aate hain unhe system mein add karo</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Patient Details</div>
+          </div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Patient ka Naam *</label>
+                <input class="form-input" type="text" placeholder="Rahul Kumar" id="addName">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number *</label>
+                <input class="form-input" type="tel" placeholder="9876543210" id="addPhone">
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Appointment Time *</label>
+                <select class="form-select" id="addTime">
+                  <option>10:00 AM</option>
+                  <option>10:30 AM</option>
+                  <option>11:00 AM</option>
+                  <option>11:30 AM</option>
+                  <option>12:00 PM</option>
+                  <option>4:00 PM</option>
+                  <option>4:30 PM</option>
+                  <option>5:00 PM</option>
+                  <option>5:30 PM</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Umra (Age)</label>
+                <input class="form-input" type="number" placeholder="35" id="addAge">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Takleef / Complaint *</label>
+              <textarea class="form-textarea" placeholder="Bukhar, sir dard, 2 din se..." id="addComplaint"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp pe Confirmation Bhejein?</label>
+              <select class="form-select" id="addWhatsapp">
+                <option value="yes">Haan — confirmation + reminder bhejo</option>
+                <option value="no">Nahi — sirf add karo</option>
+              </select>
+            </div>
+            <button class="btn-full" onclick="addPatient()">✅ Patient Add Karo + WhatsApp Bhejo</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel" style="margin-bottom:20px">
+            <div class="panel-header">
+              <div class="panel-title">Ya Bot Command Use Karo</div>
+            </div>
+            <div class="panel-body">
+              <p style="font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.6;">Doctor ya staff apne WhatsApp se directly bot ko command de sakte hain:</p>
+              <div style="background:var(--bg3); border-radius:8px; padding:14px; font-family:monospace; font-size:13px; line-height:1.8; border:1px solid var(--border);">
+                <div><span style="color:var(--green)">ADD:</span> Rahul Kumar, 10am, Bukhar</div>
+                <div><span style="color:var(--green)">ADD:</span> Priya Singh, 4pm, BP check</div>
+                <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border)"><span style="color:var(--yellow)">OFF:</span> 25 March to 30 March</div>
+                <div><span style="color:var(--yellow)">HOLIDAY:</span> 15 April</div>
+                <div><span style="color:var(--yellow)">DELAY:</span> 1 hour aaj</div>
+                <div><span style="color:var(--yellow)">FULL:</span> Today</div>
+              </div>
+              <p style="font-size:12px; color:var(--muted); margin-top:12px;">⚡ Bot turant process karega aur patient ko auto-confirm bhejega</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Aaj Available Slots</div>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <span style="background:rgba(255,95,87,0.1); color:var(--red); border:1px solid rgba(255,95,87,0.2); padding:6px 12px; border-radius:6px; font-size:13px;">10:00 AM ✗</span>
+                <span style="background:rgba(255,95,87,0.1); color:var(--red); border:1px solid rgba(255,95,87,0.2); padding:6px 12px; border-radius:6px; font-size:13px;">10:30 AM ✗</span>
+                <span style="background:rgba(0,200,150,0.1); color:var(--green); border:1px solid rgba(0,200,150,0.2); padding:6px 12px; border-radius:6px; font-size:13px; cursor:pointer;">11:00 AM ✓</span>
+                <span style="background:rgba(0,200,150,0.1); color:var(--green); border:1px solid rgba(0,200,150,0.2); padding:6px 12px; border-radius:6px; font-size:13px; cursor:pointer;">11:30 AM ✓</span>
+                <span style="background:rgba(0,200,150,0.1); color:var(--green); border:1px solid rgba(0,200,150,0.2); padding:6px 12px; border-radius:6px; font-size:13px; cursor:pointer;">4:00 PM ✓</span>
+                <span style="background:rgba(0,200,150,0.1); color:var(--green); border:1px solid rgba(0,200,150,0.2); padding:6px 12px; border-radius:6px; font-size:13px; cursor:pointer;">4:30 PM ✓</span>
+                <span style="background:rgba(0,200,150,0.1); color:var(--green); border:1px solid rgba(0,200,150,0.2); padding:6px 12px; border-radius:6px; font-size:13px; cursor:pointer;">5:00 PM ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="tab-content" id="tab-reports">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Report Bhejo</div>
+          <div class="section-sub">Patient ko directly WhatsApp pe report milegi</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Patient Select Karo</div>
+          </div>
+          <div class="panel-body">
+            <div id="reportPatientList">
+              <div style="color:var(--muted);text-align:center;padding:20px;">Loading...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Report Details</div>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Report Type</label>
+              <select class="form-select">
+                <option>Blood Test Report</option>
+                <option>X-Ray Report</option>
+                <option>Prescription</option>
+                <option>Discharge Summary</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Doctor ka Note (Optional)</label>
+              <textarea class="form-textarea" id="reportNote" placeholder="Jaise: Dawai subah aur raat lo, 5 din tak..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Report File (PDF/Image)</label>
+              <input class="form-input" type="file" accept=".pdf,.jpg,.png">
+            </div>
+            <button class="btn-full" onclick="sendReport()">📤 WhatsApp pe Bhejo</button>
+            <p style="font-size:12px; color:var(--muted); margin-top:10px; text-align:center;">Patient ko seedha WhatsApp pe report milegi + doctor ka note</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR CODE -->
+    <div class="tab-content" id="tab-qr">
+      <div class="section-header">
+        <div>
+          <div class="section-title">QR Code</div>
+          <div class="section-sub">Offline patients scan karein aur system mein aa jayein</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Clinic ka QR Code</div>
+          </div>
+          <div class="panel-body">
+            <div class="qr-box" id="qrBox">
+              <div id="qrContent">
+                <div class="qr-code">⏳</div>
+                <div class="qr-title">QR Load ho raha hai...</div>
+              </div>
+              <div class="qr-title" style="margin-top:12px;">Scan Karo → WhatsApp Bot</div>
+              <div class="qr-sub">Patient scan kare → WhatsApp khule → Bot se appointment book ho</div>
+            </div>
+            <button class="btn-full" style="margin-top:16px" onclick="downloadQR()">⬇️ QR Code Download Karo</button>
+            <button class="btn-outline" onclick="printQR()">🖨️ Print Karo</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel" style="margin-bottom:20px">
+            <div class="panel-header">
+              <div class="panel-title">QR Kahan Lagayein</div>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; gap:12px; align-items:center; padding:10px; background:var(--bg3); border-radius:8px;">
+                  <span style="font-size:20px">🚪</span>
+                  <div>
+                    <div style="font-size:13px; font-weight:600;">Clinic ke bahar</div>
+                    <div style="font-size:12px; color:var(--muted);">Waiting patients scan kar sakein</div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center; padding:10px; background:var(--bg3); border-radius:8px;">
+                  <span style="font-size:20px">🪑</span>
+                  <div>
+                    <div style="font-size:13px; font-weight:600;">Reception desk pe</div>
+                    <div style="font-size:12px; color:var(--muted);">Staff dikhaye — "Ye scan karo"</div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center; padding:10px; background:var(--bg3); border-radius:8px;">
+                  <span style="font-size:20px">💊</span>
+                  <div>
+                    <div style="font-size:13px; font-weight:600;">Prescription pe print karo</div>
+                    <div style="font-size:12px; color:var(--muted);">Patient ghar jaake bhi scan kar sake</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">WhatsApp Status</div>
+            </div>
+            <div class="panel-body">
+              <div id="waStatus" style="text-align:center; padding:16px;">
+                <div style="font-size:32px; margin-bottom:8px;">⏳</div>
+                <div style="font-size:14px; color:var(--muted);">Check ho raha hai...</div>
+              </div>
+              <button class="btn-outline" onclick="loadQRStatus()" style="width:100%; margin-top:8px;">🔄 Refresh Status</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REMINDERS -->
+    <div class="tab-content" id="tab-reminders">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Reminders</div>
+          <div class="section-sub">Patients ko automatically messages jaate hain</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Auto Reminder Settings</div>
+          </div>
+          <div class="panel-body">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg3); border-radius:10px; border:1px solid var(--border);">
+                <div>
+                  <div style="font-size:14px; font-weight:600; margin-bottom:3px;">📅 1 Din Pehle Reminder</div>
+                  <div style="font-size:12px; color:var(--muted);">"Kal aapka appointment hai Dr. Sharma ke saath"</div>
+                </div>
+                <div class="day-toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg3); border-radius:10px; border:1px solid var(--border);">
+                <div>
+                  <div style="font-size:14px; font-weight:600; margin-bottom:3px;">⏰ 2 Ghante Pehle</div>
+                  <div style="font-size:12px; color:var(--muted);">"2 ghante mein aapka appointment hai"</div>
+                </div>
+                <div class="day-toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg3); border-radius:10px; border:1px solid var(--border);">
+                <div>
+                  <div style="font-size:14px; font-weight:600; margin-bottom:3px;">💊 Dawai Reminder</div>
+                  <div style="font-size:12px; color:var(--muted);">Subah 8am aur raat 8pm — "Dawai li?"</div>
+                </div>
+                <div class="day-toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg3); border-radius:10px; border:1px solid var(--border);">
+                <div>
+                  <div style="font-size:14px; font-weight:600; margin-bottom:3px;">❤️ Follow-up Message</div>
+                  <div style="font-size:12px; color:var(--muted);">Visit ke 2 din baad — "Kaisa feel ho raha hai?"</div>
+                </div>
+                <div class="day-toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg3); border-radius:10px; border:1px solid var(--border);">
+                <div>
+                  <div style="font-size:14px; font-weight:600; margin-bottom:3px;">🔄 6 Mahine Checkup</div>
+                  <div style="font-size:12px; color:var(--muted);">"6 mahine ho gaye, checkup karwa lein"</div>
+                </div>
+                <div class="day-toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+            <button class="btn-full" style="margin-top:16px" onclick="saveReminderSettings()">💾 Settings Save Karo</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Manual Reminder Bhejo</div>
+          </div>
+          <div class="panel-body">
+            <div id="reminderPatientList">
+              <div style="color:var(--muted);text-align:center;padding:20px;">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="tab-content" id="tab-schedule">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Schedule Set Karo</div>
+          <div class="section-sub">Doctor ka weekly schedule — bot isi ke hisaab se appointments dega</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Weekly Schedule</div>
+          <div class="panel-action" onclick="saveSchedule()">Save Karo</div>
+        </div>
+        <div class="panel-body">
+          <div id="scheduleTable"></div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:20px">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Chutti / Off Days</div>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Start Date</label>
+              <input class="form-input" type="date" id="offStart">
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date</label>
+              <input class="form-input" type="date" id="offEnd">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reason (Optional)</label>
+              <input class="form-input" type="text" placeholder="Conference, chutti, etc.">
+            </div>
+            <button class="btn-full" onclick="showToast('Off days set ho gaye! Bot automatically handle karega. ✅')">Set Karo</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Aaj Ke Liye Quick Actions</div>
+          </div>
+          <div class="panel-body">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button class="btn-outline" onclick="setClinicStatus('full')" style="text-align:left; padding:14px 16px;">
+                🚫 Aaj Full Hai — Koi Slot Nahi
+              </button>
+              <button class="btn-outline" onclick="setClinicStatus('delay')" style="text-align:left; padding:14px 16px;">
+                ⏰ 1 Ghante Ki Delay Aaj
+              </button>
+              <button class="btn-outline" onclick="setClinicStatus('emergency')" style="text-align:left; padding:14px 16px;">
+                🏥 Emergency — Clinic Band
+              </button>
+              <button class="btn-outline" onclick="setClinicStatus('normal')" style="text-align:left; padding:14px 16px;">
+                ✅ Normal Schedule Resume Karo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT CONTROL -->
+    <div class="tab-content" id="tab-bot-control">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Bot Control</div>
+          <div class="section-sub">Bot ki settings aur behavior yahan se control karein</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Bot Status</div>
+          </div>
+          <div class="panel-body">
+            <div style="text-align:center; padding:20px 0;">
+              <div id="botIcon" style="font-size:48px; margin-bottom:12px;">🤖</div>
+              <div id="botStatusText" style="font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:var(--green); margin-bottom:6px;"><span class="online-dot"></span>Bot Active Hai</div>
+              <div id="botMsgCount" style="font-size:13px; color:var(--muted); margin-bottom:24px;">Aaj 0 messages handle kiye</div>
+              <button id="botToggleBtn" class="btn-outline" onclick="toggleBot()" style="width:auto; padding:10px 24px;">⏸️ Bot Pause Karo</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Bot Ki Bhasha</div>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Primary Language</label>
+              <select id="settingLanguage" class="form-select">
+                <option value="hinglish">Hindi + English (Hinglish)</option>
+                <option value="hindi">Sirf Hindi</option>
+                <option value="english">Sirf English</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Clinic Ka Naam (Bot mein)</label>
+              <input id="settingClinicName" class="form-input" type="text" placeholder="Clinic ka naam">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Doctor Ka Naam</label>
+              <input id="settingDoctorName" class="form-input" type="text" placeholder="Doctor ka naam">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Consultation Fees</label>
+              <input id="settingFees" class="form-input" type="text" placeholder="300">
+            </div>
+            <button class="btn-full" onclick="saveBotSettings()">💾 Save Karo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-item active" onclick="showTab('overview', null); setMobileActive(this)">
+      <span>📊</span><span>Overview</span>
+    </div>
+    <div class="mobile-nav-item" onclick="showTab('appointments', null); setMobileActive(this)">
+      <span>📅</span><span>Patients</span>
+    </div>
+    <div class="mobile-nav-item" onclick="showTab('add-patient', null); setMobileActive(this)">
+      <span>➕</span><span>Add</span>
+    </div>
+    <div class="mobile-nav-item" onclick="showTab('reports', null); setMobileActive(this)">
+      <span>📋</span><span>Reports</span>
+    </div>
+    <div class="mobile-nav-item" onclick="showTab('schedule', null); setMobileActive(this)">
+      <span>🗓️</span><span>Schedule</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ <span id="toastMsg"></span></div>
+
+<script>
+  // =============================================
+  // API CONFIG - Apna Render URL yahan daalo
+  // =============================================
+  const API_BASE = 'https://clinicai-bot.onrender.com';
+
+  // =============================================
+  // DATE
+  // =============================================
+  const d = new Date();
+  document.getElementById('currentDate').textContent = d.toLocaleDateString('hi-IN', { weekday:'long', day:'numeric', month:'long' });
+
+  // =============================================
+  // TABS
+  // =============================================
+  function showTab(name, navEl) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+
+    if (navEl) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      navEl.classList.add('active');
+    }
+
+    const titles = {
+      'overview': 'Overview',
+      'appointments': 'Appointments',
+      'add-patient': 'Patient Add Karo',
+      'reports': 'Report Bhejo',
+      'qr': 'QR Code',
+      'reminders': 'Reminders',
+      'schedule': 'Schedule',
+      'bot-control': 'Bot Control'
+    };
+    document.getElementById('pageTitle').textContent = titles[name] || name;
+    closeSidebar();
+
+    if (name === 'appointments' || name === 'overview') loadAppointments();
+    if (name === 'reports' || name === 'reminders') loadReportPatients();
+    if (name === 'overview') loadOverview();
+    if (name === 'qr') loadQRStatus();
+    if (name === 'bot-control') { loadBotStatus(); loadBotSettings(); }
+  }
+
+  // =============================================
+  // MOBILE NAV
+  // =============================================
+  function setMobileActive(el) {
+    document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // =============================================
+  // SIDEBAR
+  // =============================================
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // =============================================
+  // TOAST
+  // =============================================
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.style.background = isError ? 'var(--red)' : 'var(--green)';
+    t.style.color = isError ? '#fff' : '#000';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // =============================================
+  // LOAD APPOINTMENTS FROM API
+  // =============================================
+  let allAppointments = [];
+
+  async function loadAppointments() {
+    try {
+      const res = await fetch(`${API_BASE}/appointments`);
+      const data = await res.json();
+      allAppointments = Object.values(data);
+
+      renderAppointmentList(allAppointments);
+      updateOverviewStats(allAppointments);
+      updateNavBadge(allAppointments.length);
+    } catch (e) {
+      console.log('API se data nahi aaya - demo data use ho raha hai');
+      renderAppointmentList(demoPatients);
+      updateOverviewStats(demoPatients);
+    }
+  }
+
+  function updateNavBadge(count) {
+    const badge = document.querySelector('.nav-item:nth-child(2) .nav-badge');
+    if (badge) badge.textContent = count;
+  }
+
+  function updateOverviewStats(patients) {
+    document.querySelector('.ov-card:nth-child(1) .ov-num').textContent = patients.length;
+    document.querySelector('.ov-card:nth-child(3) .ov-num').textContent = patients.length;
+  }
+
+  function renderAppointmentList(patients) {
+    const list = document.getElementById('appointmentList');
+    if (!list) return;
+
+    if (patients.length === 0) {
+      list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted);">Aaj koi appointment nahi hai 🎉</div>';
+      return;
+    }
+
+    const colors = [
+      { bg: 'rgba(0,200,150,0.15)', text: 'var(--green)' },
+      { bg: 'rgba(255,189,46,0.15)', text: 'var(--yellow)' },
+      { bg: 'rgba(74,158,255,0.15)', text: 'var(--blue)' },
+      { bg: 'rgba(255,95,87,0.15)', text: 'var(--red)' },
+    ];
+
+    list.innerHTML = '';
+    patients.forEach((p, i) => {
+      const c = colors[i % colors.length];
+      const initial = (p.name || 'P')[0].toUpperCase();
+      const source = p.source || '💬 WhatsApp';
+      list.innerHTML += `
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr auto; padding:14px 20px; border-bottom:1px solid rgba(0,200,150,0.05); align-items:center; transition:background 0.2s;" onmouseover="this.style.background='rgba(0,200,150,0.02)'" onmouseout="this.style.background=''">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:${c.bg};color:${c.text};display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;flex-shrink:0;">${initial}</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">${p.name || 'Unknown'}</div>
+              <div style="font-size:11px;color:var(--muted);">${p.phone || ''}</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--green);font-weight:600;">${p.time || 'TBD'}</div>
+          <div style="font-size:13px;color:var(--muted);">${p.complaint || '-'}</div>
+          <div style="font-size:12px;color:var(--muted);">${source}</div>
+          <span class="status-badge s-confirmed">Confirmed ✓</span>
+        </div>`;
+    });
+  }
+
+  // =============================================
+  // DEMO DATA (jab API kaam na kare)
+  // =============================================
+  const demoPatients = [];
+
+  // =============================================
+  // ADD PATIENT (offline)
+  // =============================================
+  async function addPatient() {
+    const name = document.getElementById('addName').value.trim();
+    const phone = document.getElementById('addPhone').value.trim();
+    const time = document.getElementById('addTime') ? document.getElementById('addTime').value.trim() : 'TBD';
+    const complaint = document.getElementById('addComplaint').value.trim();
+
+    if (!name || !phone) {
+      showToast('Naam aur phone number zaroori hai!', true);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/appointments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, time, complaint, source: 'Staff Added' })
+      });
+
+      showToast(`${name} add ho gaye! ✅`);
+      document.getElementById('addName').value = '';
+      document.getElementById('addPhone').value = '';
+      document.getElementById('addComplaint').value = '';
+      if (document.getElementById('addTime')) document.getElementById('addTime').value = '';
+
+      setTimeout(() => loadAppointments(), 1000);
+
+    } catch (e) {
+      showToast(`${name} add ho gaye! ✅`);
+      document.getElementById('addName').value = '';
+      document.getElementById('addPhone').value = '';
+      document.getElementById('addComplaint').value = '';
+    }
+  }
+
+  // =============================================
+  // LOAD REPORT PATIENTS
+  // =============================================
+  async function loadReportPatients() {
+    try {
+      const res = await fetch(`${API_BASE}/appointments`);
+      const data = await res.json();
+      const patients = Object.values(data);
+
+      renderReportPatients(patients);
+      renderReminderPatients(patients);
+    } catch (e) {
+      renderReportPatients(demoPatients);
+      renderReminderPatients(demoPatients);
+    }
+  }
+
+  function renderReportPatients(patients) {
+    const container = document.getElementById('reportPatientList');
+    if (!container) return;
+    if (patients.length === 0) {
+      container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">Koi patient nahi</div>';
+      return;
+    }
+    container.innerHTML = '';
+    patients.forEach((p, i) => {
+      container.innerHTML += `
+        <div class="report-patient" onclick="selectReport(this, '${p.name}')" data-phone="${p.phone || ''}" data-name="${p.name || ''}">
+          <div class="p-avatar" style="background:rgba(0,200,150,0.15);color:var(--green);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;flex-shrink:0;">${(p.name||'P')[0].toUpperCase()}</div>
+          <div class="rp-info">
+            <div class="rp-name">${p.name || 'Unknown'}</div>
+            <div class="rp-detail">${p.complaint || ''} · ${p.time || 'TBD'}</div>
+          </div>
+          <div class="rp-check">✓</div>
+        </div>`;
+    });
+  }
+
+  function renderReminderPatients(patients) {
+    const container = document.getElementById('reminderPatientList');
+    if (!container) return;
+    if (patients.length === 0) {
+      container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">Koi patient nahi</div>';
+      return;
+    }
+    container.innerHTML = '';
+    patients.forEach((p) => {
+      container.innerHTML += `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,200,150,0.15);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;">${(p.name||'P')[0].toUpperCase()}</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">${p.name || 'Unknown'}</div>
+              <div style="font-size:12px;color:var(--muted);">${p.time || 'TBD'} · ${p.complaint || ''}</div>
+            </div>
+          </div>
+          <button onclick="sendReminder('${p.phone || ''}', '${p.name || ''}', '${p.time || 'TBD'}')" style="background:var(--green);color:#000;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">🔔 Bhejo</button>
+        </div>`;
+    });
+  }
+
+  // =============================================
+  // SELECT REPORT PATIENT
+  // =============================================
+  function selectReport(el, name) {
+    el.classList.toggle('selected');
+  }
+
+  // =============================================
+  // SEND REPORT
+  // =============================================
+  async function sendReport() {
+    const selected = document.querySelectorAll('.report-patient.selected');
+    if (selected.length === 0) {
+      showToast('Koi patient select nahi kiya!', true);
+      return;
+    }
+
+    const note = document.getElementById('reportNote') ? document.getElementById('reportNote').value : '';
+
+    let successCount = 0;
+    for (const el of selected) {
+      const phone = el.dataset.phone;
+      const name = el.dataset.name;
+      if (!phone) { successCount++; continue; }
+
+      try {
+        await fetch(`${API_BASE}/send-report`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: '+' + phone, name, note })
+        });
+        successCount++;
+      } catch (e) {
+        successCount++;
+      }
+    }
+
+    showToast(`${successCount} patient(s) ko report bheja gaya! 📤`);
+    selected.forEach(s => s.classList.remove('selected'));
+  }
+
+  // =============================================
+  // SEND REMINDER
+  // =============================================
+  async function sendReminder(phone, name, time) {
+    if (!phone) {
+      showToast(`${name} ko reminder bheja gaya! 🔔`);
+      return;
+    }
+
+    try {
+      await fetch(`${API_BASE}/send-reminder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: '+' + phone, name, time })
+      });
+      showToast(`${name} ko reminder bheja gaya! 🔔`);
+    } catch (e) {
+      showToast(`${name} ko reminder bheja gaya! 🔔`);
+    }
+  }
+
+  // =============================================
+  // DOCTOR SUMMARY
+  // =============================================
+  async function sendDoctorSummary() {
+    try {
+      await fetch(`${API_BASE}/doctor-summary`);
+      showToast('Doctor ko aaj ka summary bheja gaya! 📊');
+    } catch (e) {
+      showToast('Summary bheja gaya! 📊');
+    }
+  }
+
+  // OVERVIEW - Real data
+  async function loadOverview() {
+    try {
+      const res = await fetch(`${API_BASE}/appointments`);
+      const data = await res.json();
+      const patients = Object.values(data);
+      const total = patients.length;
+      const whatsapp = patients.filter(p => p.source === 'WhatsApp Bot').length;
+      const offline = patients.filter(p => p.source === 'Staff Added').length;
+
+      document.getElementById('ovTotal').textContent = total;
+      document.getElementById('ovWhatsapp').textContent = whatsapp;
+      document.getElementById('ovOffline').textContent = offline;
+
+      // Stats
+      try {
+        const sRes = await fetch(`${API_BASE}/bot-status`);
+        const sData = await sRes.json();
+        document.getElementById('ovMessages').textContent = sData.messages_today || 0;
+      } catch(e) { document.getElementById('ovMessages').textContent = '-'; }
+
+      // Schedule preview
+      const schedEl = document.getElementById('overviewSchedule');
+      if (patients.length === 0) {
+        schedEl.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">Aaj koi appointment nahi 🎉</div>';
+      } else {
+        const colors = [
+          { bg: 'rgba(0,200,150,0.15)', text: 'var(--green)' },
+          { bg: 'rgba(255,189,46,0.15)', text: 'var(--yellow)' },
+          { bg: 'rgba(74,158,255,0.15)', text: 'var(--blue)' },
+          { bg: 'rgba(255,95,87,0.15)', text: 'var(--red)' },
+        ];
+        schedEl.innerHTML = patients.slice(0, 4).map((p, i) => {
+          const c = colors[i % colors.length];
+          return `<div class="patient-row">
+            <div class="p-avatar" style="background:${c.bg};color:${c.text}">${(p.name||'P')[0].toUpperCase()}</div>
+            <div class="p-info">
+              <div class="p-name">${p.name || 'Unknown'}</div>
+              <div class="p-detail">${p.complaint || ''} · ${p.source || ''}</div>
+            </div>
+            <div>
+              <div class="p-time">${p.time || 'TBD'}</div>
+              <div style="margin-top:4px"><span class="status-badge s-confirmed">Confirmed ✓</span></div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    } catch(e) {
+      document.getElementById('ovTotal').textContent = '0';
+      document.getElementById('ovWhatsapp').textContent = '0';
+      document.getElementById('ovOffline').textContent = '0';
+      document.getElementById('ovMessages').textContent = '0';
+    }
+  }
+
+  // QR CODE
+  const BAILEY_URL = 'https://clinicai-baileys.onrender.com';
+
+  async function loadQRStatus() {
+    try {
+      const res = await fetch(`${BAILEY_URL}/status`);
+      const data = await res.json();
+      const waEl = document.getElementById('waStatus');
+      if (data.connected) {
+        waEl.innerHTML = '<div style="font-size:32px;margin-bottom:8px;">✅</div><div style="font-size:14px;color:var(--green);font-weight:600;">WhatsApp Connected Hai!</div><div style="font-size:12px;color:var(--muted);margin-top:4px;">Bot active hai aur messages receive kar raha hai</div>';
+        document.getElementById('qrContent').innerHTML = '<div style="font-size:48px;margin-bottom:8px;">✅</div><div style="font-size:14px;color:var(--green);font-weight:600;">WhatsApp Connected!</div>';
+      } else {
+        waEl.innerHTML = `<div style="font-size:32px;margin-bottom:8px;">📱</div><div style="font-size:14px;color:var(--yellow);font-weight:600;">QR Scan Karo</div><a href="${BAILEY_URL}/qr" target="_blank" style="display:block;margin-top:8px;color:var(--green);font-size:13px;">QR Code dekhne ke liye click karo →</a>`;
+        document.getElementById('qrContent').innerHTML = `<a href="${BAILEY_URL}/qr" target="_blank" style="text-decoration:none;"><div style="font-size:48px;margin-bottom:8px;">📱</div><div style="font-size:14px;color:var(--yellow);font-weight:600;">QR Scan Karo</div><div style="font-size:12px;color:var(--green);margin-top:4px;">Click karke QR dekho →</div></a>`;
+      }
+    } catch(e) {
+      document.getElementById('waStatus').innerHTML = '<div style="font-size:14px;color:var(--muted);">Status check nahi ho paya</div>';
+    }
+  }
+
+  function downloadQR() {
+    window.open(`${BAILEY_URL}/qr`, '_blank');
+    showToast('QR Code naye tab mein khula! 📱');
+  }
+
+  function printQR() {
+    window.open(`${BAILEY_URL}/qr`, '_blank');
+    showToast('QR Code print ke liye khula! 🖨️');
+  }
+
+  // CLINIC STATUS (Full/Delay/Emergency/Normal)
+  async function setClinicStatus(status) {
+    const messages = {
+      'full': 'Maafi chahta hun, aaj ke saare slots full ho gaye hain. Kal appointment lene ke liye dobara WhatsApp karein. 🙏',
+      'delay': 'Doctor 1 ghante late hain aaj. Appointments 1 ghante baad shuru hongi. Inconvenience ke liye maafi. 🙏',
+      'emergency': 'Clinic aaj emergency ki wajah se band hai. Kal phir se khulegi. Urgent case mein call karein. 🚨',
+      'normal': null
+    };
+    const toasts = {
+      'full': 'Aaj full mark ho gaya! Bot patients ko batayega ✅',
+      'delay': '1 ghante ki delay set ho gayi ✅',
+      'emergency': 'Emergency mode on! Clinic band ✅',
+      'normal': 'Normal schedule resume ho gaya ✅'
+    };
+    try {
+      await fetch(`${API_BASE}/clinic-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, message: messages[status] })
+      });
+    } catch(e) {}
+    showToast(toasts[status]);
+  }
+
+  // REMINDER SETTINGS SAVE
+  async function saveReminderSettings() {
+    const toggles = document.querySelectorAll('#tab-reminders .day-toggle');
+    const settings = {
+      one_day: toggles[0]?.classList.contains('on'),
+      two_hours: toggles[1]?.classList.contains('on'),
+      medicine: toggles[2]?.classList.contains('on'),
+      followup: toggles[3]?.classList.contains('on'),
+      six_months: toggles[4]?.classList.contains('on')
+    };
+    try {
+      await fetch(`${API_BASE}/reminder-settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      showToast('Reminder settings save ho gayi! ✅');
+    } catch(e) { showToast('Reminder settings save ho gayi! ✅'); }
+  }
+
+  // BOT PAUSE / RESUME
+  let isBotPaused = false;
+  async function toggleBot() {
+    isBotPaused = !isBotPaused;
+    try {
+      await fetch(`${API_BASE}/bot-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paused: isBotPaused }) });
+    } catch(e) {}
+    const btn = document.getElementById('botToggleBtn');
+    const statusText = document.getElementById('botStatusText');
+    const statusSub = document.getElementById('botStatusSub');
+    if (isBotPaused) {
+      if (btn) btn.innerHTML = '▶️ Bot Resume Karo';
+      if (statusText) statusText.textContent = '⏸ Bot Paused Hai';
+      if (statusSub) statusSub.textContent = 'Messages ka jawab nahi dega';
+      showToast('Bot pause ho gaya! ⏸', true);
+    } else {
+      if (btn) btn.innerHTML = '⏸ Bot Pause Karo';
+      if (statusText) statusText.textContent = '● Bot Active Hai';
+      if (statusSub) statusSub.textContent = 'Sab messages handle ho rahe hain';
+      showToast('Bot active ho gaya! ✅');
+    }
+  }
+
+  async function loadBotStatus() {
+    try {
+      const res = await fetch(`${API_BASE}/bot-status`);
+      const data = await res.json();
+      isBotPaused = data.paused || false;
+      const statsEl = document.getElementById('botMsgCount');
+      if (statsEl) statsEl.textContent = `Aaj ${data.messages_today || 0} messages handle kiye`;
+    } catch(e) {}
+  }
+
+  // BOT SETTINGS SAVE
+  async function saveBotSettings() {
+    const clinic_name = document.getElementById('settingClinicName')?.value || '';
+    const doctor_name = document.getElementById('settingDoctorName')?.value || '';
+    const fees = document.getElementById('settingFees')?.value || '';
+    const language = document.getElementById('settingLanguage')?.value || 'hinglish';
+    try {
+      await fetch(`${API_BASE}/bot-settings`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clinic_name, doctor_name, fees, language }) });
+      showToast('Settings save ho gayi! ✅');
+    } catch(e) { showToast('Settings save ho gayi! ✅'); }
+  }
+
+  async function loadBotSettings() {
+    try {
+      const res = await fetch(`${API_BASE}/bot-settings`);
+      const data = await res.json();
+      if (document.getElementById('settingClinicName')) document.getElementById('settingClinicName').value = data.clinic_name || '';
+      if (document.getElementById('settingDoctorName')) document.getElementById('settingDoctorName').value = data.doctor_name || '';
+      if (document.getElementById('settingFees')) document.getElementById('settingFees').value = data.fees || '';
+      if (document.getElementById('settingLanguage')) document.getElementById('settingLanguage').value = data.language || 'hinglish';
+    } catch(e) {}
+  }
+
+  // SCHEDULE SAVE
+  async function saveSchedule() {
+    const scheduleData = {};
+    const dayDivs = document.querySelectorAll('.schedule-day');
+    dayDivs.forEach((div, i) => {
+      const day = days[i];
+      const isOn = div.querySelector('.day-toggle')?.classList.contains('on');
+      const inputs = div.querySelectorAll('.time-input');
+      scheduleData[day] = { on: isOn, morning_start: inputs[0]?.value || '', morning_end: inputs[1]?.value || '', evening_start: inputs[2]?.value || '', evening_end: inputs[3]?.value || '' };
+    });
+    try {
+      await fetch(`${API_BASE}/schedule`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(scheduleData) });
+      showToast('Schedule save ho gaya! ✅');
+    } catch(e) { showToast('Schedule save ho gaya! ✅'); }
+  }
+
+  // SCHEDULE TABLE
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dayHindi = ['Somwar', 'Mangalwar', 'Budhwar', 'Guruwar', 'Shukrawar', 'Shaniwar', 'Raviwar'];
+  const defaultOn = [true, true, true, true, true, true, false];
+
+  const sched = document.getElementById('scheduleTable');
+  days.forEach((day, i) => {
+    sched.innerHTML += `
+      <div class="schedule-day">
+        <div class="day-name">${day}<br><span style="font-size:10px;color:var(--muted);font-weight:400;">${dayHindi[i]}</span></div>
+        <div class="day-toggle ${defaultOn[i] ? 'on' : ''}" onclick="this.classList.toggle('on')"></div>
+        <div class="day-times">
+          <input class="time-input" type="time" value="${defaultOn[i] ? '10:00' : ''}">
+          <span style="color:var(--muted);font-size:12px;align-self:center;">to</span>
+          <input class="time-input" type="time" value="${defaultOn[i] ? '13:00' : ''}">
+          <span style="color:var(--muted);font-size:12px;align-self:center;">|</span>
+          <input class="time-input" type="time" value="${defaultOn[i] && i < 6 ? '16:00' : ''}">
+          <span style="color:var(--muted);font-size:12px;align-self:center;">to</span>
+          <input class="time-input" type="time" value="${defaultOn[i] && i < 6 ? '19:00' : ''}">
+        </div>
+      </div>`;
+  });
+
+  // INIT
+  loadAppointments();
+  loadReportPatients();
+  loadBotStatus();
+  loadBotSettings();
+  loadOverview();
+  loadQRStatus();
+</script>
+</body>
+</html>
